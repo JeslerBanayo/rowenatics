@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Collect Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="logo.webp">
+</head>
+<body>
+  
+    <div class="admin-layout">
+        
+        <nav class="admin-sidebar" id="adminSidebar">
+            <div class="admin-nav-brand">
+                <img src="logo.webp" alt="E-Collect Logo">
+                <h1>Admin Dashboard</h1>
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+            </div>
+            <div class="admin-nav-links" id="adminNavLinks">
+                <a href="#" onclick="showAdminSection('dashboard')" class="active"> Dashboard</a>
+                <a href="#" onclick="showAdminSection('reports')"> Reports</a>
+                <a href="#" onclick="showAdminSection('schedule')"> Schedule</a>
+                <a href="#" onclick="showAdminSection('history')"> History</a>
+                <a href="#" onclick="showAdminSection('collectors')"> Collectors Personnel</a>
+                <a href="index.html" class="back-link">User Page</a>
+            </div>
+        </nav>
+
+      
+        <div class="admin-content">
+        
+        <div id="admin-dashboard" class="admin-section active">
+            <h2>📊 Admin Dashboard</h2>
+            
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="totalReports">0</div>
+                        <div class="stat-label">Total Reports</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="pendingReports">0</div>
+                        <div class="stat-label">Pending Reports</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="scheduledCollections">0</div>
+                        <div class="stat-label">Scheduled</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="completedCollections">0</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="activity-section">
+                <h3>🔔 Recent Activity</h3>
+                <div id="recentActivity" class="activity-list">
+                  
+                </div>
+            </div>
+
+            
+            <div class="quick-actions">
+                <h3>⚡ Quick Actions</h3>
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="showAdminSection('reports')">View All Reports</button>
+                    <button class="btn-secondary" onclick="openScheduleModal()">Add Collection Schedule</button>
+                    <button class="btn-warning" onclick="openNotificationModal()">Send Notification</button>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="admin-reports" class="admin-section">
+            <h2>📝 Waste Collection Reports</h2>
+            
+            <div class="section-controls">
+                <input type="text" id="reportSearch" placeholder="Search reports..." onkeyup="filterReports()">
+                <select id="reportFilter" onchange="filterReports()">
+                    <option value="all">All Reports</option>
+                    <option value="pending">Pending</option>
+                    <option value="scheduled">Scheduled</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <button class="btn-primary" onclick="refreshReports()">Refresh</button>
+            </div>
+
+            <div id="reportsList" class="reports-list">
+                
+            </div>
+        </div>
+
+        
+        <div id="admin-schedule" class="admin-section">
+            <h2>📅 Collection Schedule</h2>
+            
+            <div class="section-controls">
+                <button class="btn-primary" onclick="openScheduleModal()">Add Schedule</button>
+                <button class="btn-secondary" onclick="refreshSchedule()">Refresh</button>
+                <button class="btn-warning" onclick="deleteSchedulesByDate()">Delete by Date</button>
+                <button class="btn-danger" onclick="bulkDeleteSchedules()">Delete All</button>
+            
+            </div>
+
+            <div id="scheduleList" class="schedule-list">
+                
+            </div>
+        </div>
+
+        
+        <div id="admin-history" class="admin-section">
+            <h2>📋 Collection History</h2>
+            
+            <div class="section-controls">
+                <input type="text" id="historySearch" placeholder="Search history..." onkeyup="filterHistory()">
+                <select id="historyFilter" onchange="filterHistory()">
+                    <option value="all">All Collections</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <button class="btn-primary" onclick="exportHistory()">Export History</button>
+            </div>
+
+            <div id="historyList" class="history-list">
+               
+            </div>
+        </div>
+
+        <!-- Collectors Section -->
+        <div id="admin-collectors" class="admin-section">
+            <h2>👷 Collectors Personnel</h2>
+            <div class="reports-list">
+                <div class="report-card"><div class="report-title">Jayvee</div></div>
+                <div class="report-card"><div class="report-title">Rowen</div></div>
+                <div class="report-card"><div class="report-title">Dan</div></div>
+                <div class="report-card"><div class="report-title">Jesler</div></div>
+                <div class="report-card"><div class="report-title">Elliajah</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('scheduleModal')">&times;</span>
+            <h2>📅 Add Collection Schedule</h2>
+            <form id="scheduleForm">
+                <div class="form-group">
+                    <label for="scheduleDate">Collection Date:</label>
+                    <input type="date" id="scheduleDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="scheduleTime">Collection Time:</label>
+                    <input type="time" id="scheduleTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="scheduleType">Collection Type:</label>
+                    <select id="scheduleType" required>
+                        <option value="Regular Collection">Regular Collection</option>
+                        <option value="Special Collection">Special Collection</option>
+                        <option value="Emergency Collection">Emergency Collection</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="scheduleAreas">Areas to Cover:</label>
+                    <textarea id="scheduleAreas" rows="3" placeholder="Enter areas separated by commas (e.g., Purok 1, Purok 2, Purok 3)"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="scheduleNotes">Notes:</label>
+                    <textarea id="scheduleNotes" rows="3" placeholder="Additional notes for the collection..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Add Schedule</button>
+            </form>
+        </div>
+    </div>
+
+  
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('notificationModal')">&times;</span>
+            <h2>📢 Send Notification</h2>
+            <form id="notificationForm">
+                <div class="form-group">
+                    <label for="notificationTitle">Title:</label>
+                    <input type="text" id="notificationTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="notificationMessage">Message:</label>
+                    <textarea id="notificationMessage" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="notificationType">Type:</label>
+                    <select id="notificationType" required>
+                        <option value="info">Information</option>
+                        <option value="warning">Warning</option>
+                        <option value="success">Success</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Send Notification</button>
+            </form>
+        </div>
+    </div>
+
+    
+    <div id="scheduleReportModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('scheduleReportModal')">&times;</span>
+            <h2>📅 Schedule Collection</h2>
+            <form id="scheduleReportForm">
+                <input type="hidden" id="scheduleReportId">
+                <div class="form-group">
+                    <label for="collectorName">Collector Name:</label>
+                    <select id="collectorName" required>
+                        <option value="">Select collector</option>
+                        <option value="Jayvee">Jayvee</option>
+                        <option value="Rowen">Rowen</option>
+                        <option value="Dan">Dan</option>
+                        <option value="Jesler">Jesler</option>
+                        <option value="Elliajah">Elliajah</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="scheduledDay">Scheduled Day (Current month/year):</label>
+                    <input type="number" id="scheduledDay" min="1" max="31" placeholder="1-31" required>
+                </div>
+                <button type="submit" class="btn-primary">Schedule</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Report Details Modal -->
+    <div id="reportDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('reportDetailsModal')">&times;</span>
+            <h2>📝 Report Details</h2>
+            <div id="reportDetailsContent"></div>
+        </div>
+    </div>
+
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="adminNotificationContainer" class="notification-container"></div>
+
+    <script src="auth.js"></script>
+    <script>window.Auth && Auth.guardAdmin && Auth.guardAdmin();</script>
+    <script src="admin-script.js"></script>
+</body>
+</html>
